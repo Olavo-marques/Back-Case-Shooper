@@ -7,6 +7,7 @@ import { Authenticator } from "../services/Authenticator";
 import { GenerateId } from "../services/GenerateId";
 import { Role } from "../model/User";
 import { AdminsOnly } from "../error/AdminsOnly";
+import { ProductNotFound } from "../error/ProductNotFound";
 
 export class ProductBusiness {
     constructor(
@@ -64,18 +65,8 @@ export class ProductBusiness {
         const AllProductsBataBase = await this.productDataBase.selectAllProduct()
 
         if (!AllProductsBataBase.length) {
-            // throw new ProductAlreadyExists()
+            throw new ProductNotFound()
         }
-
-        // const idProduct = this.generateId.generateId()
-
-        // const newProduct = new Product(idProduct, name, price, qtyStock)
-
-        // await this.productDataBase.insertProduct(newProduct)
-
-        // const response: ICreateProductOutputDTO = {
-        //     message: "Produto cadastrado"
-        // }
 
         return AllProductsBataBase
     }
