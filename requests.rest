@@ -20,6 +20,7 @@ Content-Type: application/json
 }
 
 ### 
+@token={{login.response.body.token}}  
 POST http://localhost:3003/user/adm/product
 Content-Type: application/json
 Authorization: {{token}}
@@ -31,8 +32,8 @@ Authorization: {{token}}
 }
 
 ###
-@token={{login.response.body.token}}  
-GET http://localhost:3003/user/product
+GET http://localhost:3003/user/profile
 Authorization: {{token}}
 
+###
 

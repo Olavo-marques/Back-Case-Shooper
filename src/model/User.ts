@@ -63,6 +63,9 @@ export interface ILoginInputDTO {
 export interface ILoginOutputDTO {
     token: string
 }
+export interface IProfileInputDTO {
+    token: string
+}
 
 export interface IUserModelDataBaseDTO {
     id: string,

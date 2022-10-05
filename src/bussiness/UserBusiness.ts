@@ -1,4 +1,4 @@
-import { ILoginInputDTO, ILoginOutputDTO, ISignupInputDTO, ISignupOutputDTO, Role, User } from "../model/User";
+import { ILoginInputDTO, ILoginOutputDTO, IProfileInputDTO, ISignupInputDTO, ISignupOutputDTO, Role, User } from "../model/User";
 import { InvalidEmailOrPassword } from "../error/InvalidEmailOrPassword";
 import { Authenticator, IdTokenPayload } from "../services/Authenticator";
 import { MinimumThreeCharacters } from "../error/MinimumThreeCharacters";
@@ -10,6 +10,9 @@ import { RequiredStringType } from "../error/RequiredStringType";
 import { UserDataBase } from "../dataBase/UserDataBase";
 import { HashManager } from "../services/HashManager";
 import { GenerateId } from "../services/GenerateId";
+import { AuthenticationError } from "../error/AuthenticationError";
+import { NOTFOUND } from "dns";
+import { NotFound } from "../error/NotFound";
 
 export class UserBusiness {
     constructor(
@@ -109,5 +112,24 @@ export class UserBusiness {
         }
 
         return response
+    }
+
+    public profile = async (input: IProfileInputDTO) => {
+
+        const { token } = input
+
+        if (!token) {
+            throw new AuthenticationError()
+        }
+
+        const payload = this.authenticator.verifyToken(token)
+
+        const userDataBase = await this.userDataBase.selectUserById(payload.id)
+
+        if (!userDataBase.length) {
+            throw new NotFound()
+        }
+
+        return userDataBase
     }
 }

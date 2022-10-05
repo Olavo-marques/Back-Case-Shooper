@@ -35,7 +35,7 @@ export class UserDataBase extends BaseDataBase {
         return emailFound[0]
     }
 
-    public selectUserById = async (id: string): Promise<IUserOutputDataBaseDTO | undefined> => {
+    public selectUserById = async (id: string): Promise<IUserOutputDataBaseDTO[] > => {
         const tableUsers = UserDataBase.TABLE_USERS
 
         const emailFound: IUserOutputDataBaseDTO[] = await this.getConnection()
@@ -43,6 +43,6 @@ export class UserDataBase extends BaseDataBase {
             .into(tableUsers)
             .where({ id })
 
-        return emailFound[0]
+        return emailFound
     }
 }
