@@ -58,9 +58,9 @@ export class ProductBusiness {
 
         const { token } = input
 
-        // if (!token) {
-        //     throw new AuthenticationError()
-        // }
+        if (!token) {
+            throw new AuthenticationError()
+        }
 
         const AllProductsBataBase = await this.productDataBase.selectAllProduct()
 
