@@ -1,8 +1,9 @@
-import { IProductDTO, Product } from "../model/Product";
+import { IAddCartDataBaseDTO, INewAddProductCartDTO, IProductDTO, Product } from "../model/Product";
 import BaseDataBase from "./BaseDataBase";
 
 export class ProductDataBase extends BaseDataBase {
     private static TABLE_PRODUCTS = "Shooper_Products"
+    private static TABLE_ADD_PRODUCT = "Shooper_Add_Product"
 
     private productModel = (product: Product) => {
 
@@ -14,6 +15,18 @@ export class ProductDataBase extends BaseDataBase {
         }
 
         return productDataBAse
+    }
+
+    private addProductCartModel = (addCart: INewAddProductCartDTO) => {
+
+        const addCartDataBase: IAddCartDataBaseDTO = {
+            id: addCart.id,
+            quantity: addCart.quantity,
+            id_product: addCart.idProduct,
+            id_user: addCart.idUser,
+        }
+
+        return addCartDataBase
     }
 
     public insertProduct = async (product: Product) => {
@@ -43,4 +56,14 @@ export class ProductDataBase extends BaseDataBase {
 
         return allProduct
     }
+
+    public insertProductRequest = async (addCart: INewAddProductCartDTO) => {
+        const newProductCart = this.addProductCartModel(addCart)
+
+        await this.getConnection()
+            .insert(newProductCart)
+            .into(ProductDataBase.TABLE_ADD_PRODUCT)
+
+    }
 }
+

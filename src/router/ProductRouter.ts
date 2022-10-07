@@ -17,4 +17,6 @@ const productController = new ProductController(
 
 productRouter.post("/adm/product", productController.createProduct)
 
+productRouter.post("/cart", productController.addProductCart)
+
 productRouter.get("/product", productController.allProduct)

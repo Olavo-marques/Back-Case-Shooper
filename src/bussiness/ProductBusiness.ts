@@ -1,13 +1,13 @@
-import { IAllProductInputDTO, ICreateProductInputDTO, ICreateProductOutputDTO, Product } from "../model/Product";
+import { IAddProductCartInputDTO, IAllProductInputDTO, ICreateProductInputDTO, ICreateProductOutputDTO, INewAddProductCartDTO, Product } from "../model/Product";
 import { ProductAlreadyExists } from "../error/ProductAlreadyExists";
 import { AuthenticationError } from "../error/AuthenticationError";
 import { MissingInformation } from "../error/MissingInformation";
 import { ProductDataBase } from "../dataBase/ProductDataBase";
+import { ProductNotFound } from "../error/ProductNotFound";
 import { Authenticator } from "../services/Authenticator";
 import { GenerateId } from "../services/GenerateId";
-import { Role } from "../model/User";
 import { AdminsOnly } from "../error/AdminsOnly";
-import { ProductNotFound } from "../error/ProductNotFound";
+import { Role, User } from "../model/User";
 
 export class ProductBusiness {
     constructor(
@@ -69,5 +69,33 @@ export class ProductBusiness {
         }
 
         return AllProductsBataBase
+    }
+
+    public addProductCart = async (input: IAddProductCartInputDTO) => {
+
+        const { token, quantity, idProduct } = input
+
+        if (!token) {
+            throw new AuthenticationError()
+        }
+        if (!idProduct || !quantity) {
+            throw new MissingInformation()
+        }
+
+        const payload = this.authenticator.verifyToken(token)
+
+        const idAddProduct = this.generateId.generateId()
+
+        const newAddProduct: INewAddProductCartDTO = {
+            id: idAddProduct,
+            quantity: quantity,
+            idProduct: idProduct,
+            idUser: payload.id
+        }
+
+        await this.productDataBase.insertProductRequest(newAddProduct)
+
+        // await this.productDataBase.insertProductRequest(newAddProduct)
+
     }
 }

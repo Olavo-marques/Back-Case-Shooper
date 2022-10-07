@@ -40,4 +40,14 @@ GET http://localhost:3003/user/product
 Authorization: {{token}}
 
 ###
+post http://localhost:3003/user/cart
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "quantity": 1,
+    "idProduct": "1d8e1e7d-c701-49c9-95b8-8acd36fa556e"
+}
+
+###
 

@@ -44,9 +44,26 @@ export interface ICreateProductOutputDTO {
 export interface IAllProductInputDTO {
     token: string
 }
+export interface IAddProductCartInputDTO {
+    token: string,
+    quantity: number,
+    idProduct: string
+}
 export interface IProductDTO {
     id: string,
     name: string,
     price: number,
     qty_stock: number
+}
+export interface INewAddProductCartDTO {
+    id: string,
+    quantity: number,
+    idProduct: string,
+    idUser: string
+}
+export interface IAddCartDataBaseDTO {
+    id: string,
+    quantity: number,
+    id_product: string,
+    id_user: string
 }

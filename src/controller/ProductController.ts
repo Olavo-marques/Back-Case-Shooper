@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ProductBusiness } from "../bussiness/ProductBusiness";
-import { IAllProductInputDTO, ICreateProductInputDTO } from "../model/Product";
+import { IAddProductCartInputDTO, IAllProductInputDTO, ICreateProductInputDTO } from "../model/Product";
 
 export class ProductController {
     constructor(
@@ -39,4 +39,22 @@ export class ProductController {
             res.status(error.statusCode || 500).send({ message: error.message })
         }
     }
+
+    public addProductCart = async (req: Request, res: Response) => {
+        try {
+            const input: IAddProductCartInputDTO = {
+                token: req.headers.authorization as string,
+                quantity: req.body.quantity,
+                idProduct: req.body.idProduct
+            }
+
+            await this.productBusiness.addProductCart(input)
+
+            res.status(200).send("Produto adicionado")
+
+        } catch (error: any) {
+            res.status(error.statusCode || 500).send({ message: error.message })
+        }
+    }
+
 }
