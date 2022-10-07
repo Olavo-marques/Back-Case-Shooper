@@ -44,7 +44,6 @@ export class ProductController {
         try {
             const input: IAddProductCartInputDTO = {
                 token: req.headers.authorization as string,
-                quantity: req.body.quantity,
                 idProduct: req.body.idProduct
             }
 

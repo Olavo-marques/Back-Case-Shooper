@@ -73,12 +73,12 @@ export class ProductBusiness {
 
     public addProductCart = async (input: IAddProductCartInputDTO) => {
 
-        const { token, quantity, idProduct } = input
+        const { token, idProduct } = input
 
         if (!token) {
             throw new AuthenticationError()
         }
-        if (!idProduct || !quantity) {
+        if (!idProduct) {
             throw new MissingInformation()
         }
 
@@ -88,7 +88,6 @@ export class ProductBusiness {
 
         const newAddProduct: INewAddProductCartDTO = {
             id: idAddProduct,
-            quantity: quantity,
             idProduct: idProduct,
             idUser: payload.id
         }

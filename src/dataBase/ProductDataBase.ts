@@ -21,7 +21,6 @@ export class ProductDataBase extends BaseDataBase {
 
         const addCartDataBase: IAddCartDataBaseDTO = {
             id: addCart.id,
-            quantity: addCart.quantity,
             id_product: addCart.idProduct,
             id_user: addCart.idUser,
         }
