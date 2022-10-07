@@ -1,29 +1,5 @@
-
-### 
-POST http://localhost:3003/user/signup
-Content-Type: application/json
-
-{
-    "name":"Olavo",
-    "email": "olavo@gmail.com",
-    "password": "olavo123"
-}
-
-###
-# @name login
-POST http://localhost:3003/user/login
-Content-Type: application/json
-
-{
-    "email":"olavo@gmail.com",
-    "password":"olavo123"
-}
-
-### 
-@token={{login.response.body.token}}  
 POST http://localhost:3003/user/adm/product
 Content-Type: application/json
-Authorization: {{token}}
 
 {
     "name":"PRATO DESCARTÁVEL COPOBRAS 21CM", 
@@ -32,21 +8,18 @@ Authorization: {{token}}
 }
 
 ###
-GET http://localhost:3003/user/profile
-Authorization: {{token}}
-
-###
 GET http://localhost:3003/user/product
-Authorization: {{token}}
 
 ###
 POST http://localhost:3003/user/cart
 Content-Type: application/json
-Authorization: {{token}}
 
 {
     "idProduct": "1d8e1e7d-c701-49c9-95b8-8acd36fa556e"
 }
 
 ###
+GET  http://localhost:3003/user/product/cart
+Content-Type: application/json
 
+###

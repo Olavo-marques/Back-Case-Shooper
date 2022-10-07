@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ProductBusiness } from "../bussiness/ProductBusiness";
-import { IAddProductCartInputDTO, IAllProductInputDTO, ICreateProductInputDTO } from "../model/Product";
+import { IAddProductCartInputDTO, IAllProductInputDTO, ICreateProductInputDTO, IRequestInputDTO } from "../model/Product";
 
 export class ProductController {
     constructor(
@@ -10,7 +10,6 @@ export class ProductController {
     public createProduct = async (req: Request, res: Response) => {
         try {
             const input: ICreateProductInputDTO = {
-                token: req.headers.authorization as string,
                 name: req.body.name,
                 price: req.body.price,
                 qtyStock: req.body.qtyStock
@@ -27,11 +26,7 @@ export class ProductController {
 
     public allProduct = async (req: Request, res: Response) => {
         try {
-            const input: IAllProductInputDTO = {
-                token: req.headers.authorization as string,
-            }
-
-            const allProducts = await this.productBusiness.allProduct(input)
+            const allProducts = await this.productBusiness.allProduct()
 
             res.status(200).send(allProducts)
 
@@ -43,13 +38,45 @@ export class ProductController {
     public addProductCart = async (req: Request, res: Response) => {
         try {
             const input: IAddProductCartInputDTO = {
-                token: req.headers.authorization as string,
-                idProduct: req.body.idProduct
+                idProduct: req.body.idProduct,
+                name: req.body.name,
+                price: req.body.price,
+                qtyStock: req.body.qtyStock
             }
 
-            await this.productBusiness.addProductCart(input)
+            const response = await this.productBusiness.addProductCart(input)
 
-            res.status(200).send("Produto adicionado")
+            res.status(200).send(response)
+
+        } catch (error: any) {
+            res.status(error.statusCode || 500).send({ message: error.message })
+        }
+    }
+
+
+    public request = async (req: Request, res: Response) => {
+        try {
+            const input: IRequestInputDTO = {
+                deliveryDate: req.body.deliveryDate,
+                totalPrice: req.body.totalPrice,
+                quantity: req.body.quantity,
+            }
+
+            const response = await this.productBusiness.request(input)
+
+            res.status(200).send(response)
+
+        } catch (error: any) {
+            res.status(error.statusCode || 500).send({ message: error.message })
+        }
+    }
+
+    public productsInart = async (req: Request, res: Response) => {
+        try {
+            
+            const allProductsInart = await this.productBusiness.productsInart()
+
+            res.status(200).send(allProductsInart)
 
         } catch (error: any) {
             res.status(error.statusCode || 500).send({ message: error.message })

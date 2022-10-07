@@ -1,4 +1,5 @@
-import { IAddCartDataBaseDTO, INewAddProductCartDTO, IProductDTO, Product } from "../model/Product";
+import { count } from "console";
+import { IAddCartDataBaseDTO, INewAddProductCartDTO, INewRequestInputDTO, INewRquestDTO, IProductDTO, IProductsInartOutputDTO, Product } from "../model/Product";
 import BaseDataBase from "./BaseDataBase";
 
 export class ProductDataBase extends BaseDataBase {
@@ -16,13 +17,23 @@ export class ProductDataBase extends BaseDataBase {
 
         return productDataBAse
     }
+    private newRequestModel = (newRquest: INewRquestDTO) => {
+
+        const productDataBase: INewRequestInputDTO = {
+            id: newRquest.id,
+            delivery_date: newRquest.deliveryDate,
+            total_price: newRquest.totalPrice,
+            quantity: newRquest.quantity
+        }
+
+        return productDataBase
+    }
 
     private addProductCartModel = (addCart: INewAddProductCartDTO) => {
 
         const addCartDataBase: IAddCartDataBaseDTO = {
             id: addCart.id,
-            id_product: addCart.idProduct,
-            id_user: addCart.idUser,
+            id_product: addCart.idProduct
         }
 
         return addCartDataBase
@@ -62,6 +73,38 @@ export class ProductDataBase extends BaseDataBase {
         await this.getConnection()
             .insert(newProductCart)
             .into(ProductDataBase.TABLE_ADD_PRODUCT)
+
+    }
+
+    public insertRequest = async (newRquest: INewRquestDTO) => {
+        const newProductCart = this.newRequestModel(newRquest)
+
+        await this.getConnection()
+            .insert(newProductCart)
+            .into(ProductDataBase.TABLE_ADD_PRODUCT)
+
+    }
+
+    public selectProductsInart = async (): Promise<IProductsInartOutputDTO[]> => {
+
+        const productsInart: IProductsInartOutputDTO[] = await this.getConnection()
+            .select("*")
+            // .count("id as Id")
+            .from(ProductDataBase.TABLE_ADD_PRODUCT)
+
+        return productsInart
+
+    }
+
+    public selectProductsInartById = async (idProduct: string): Promise<IProductsInartOutputDTO | undefined> => {
+
+        const test: IProductsInartOutputDTO[] = await this.getConnection()
+            .select("*")
+            // .count("id as Id")
+            .from(ProductDataBase.TABLE_ADD_PRODUCT)
+            .where({ id_product: idProduct })
+
+        return test[0]
 
     }
 }
