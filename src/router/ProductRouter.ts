@@ -1,7 +1,6 @@
 import { ProductController } from "../controller/ProductController"
 import { ProductBusiness } from "../bussiness/ProductBusiness"
 import { ProductDataBase } from "../dataBase/ProductDataBase"
-import { Authenticator } from "../services/Authenticator"
 import { GenerateId } from "../services/GenerateId"
 import { Router } from "express"
 
@@ -10,11 +9,17 @@ export const productRouter = Router()
 const productController = new ProductController(
     new ProductBusiness(
         new ProductDataBase,
-        new GenerateId,
-        new Authenticator
+        new GenerateId
     )
 )
 
+productRouter.get("/product", productController.allProduct)
+
+productRouter.get("/product/cart", productController.productsInCart)
+
+productRouter.post("/product/cart", productController.addProductCart)
+
 productRouter.post("/adm/product", productController.createProduct)
 
-productRouter.get("/product", productController.allProduct)
+productRouter.post("/cart", productController.addProductCart)
+

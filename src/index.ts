@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import { productRouter } from "./router/ProductRouter";
-import { userRouter } from "./router/UserRouter";
 
 const app = express();
 
@@ -13,5 +12,3 @@ app.listen(3003, () => {
 })
 
 app.use('/user', productRouter)
-
-app.use('/user', userRouter)

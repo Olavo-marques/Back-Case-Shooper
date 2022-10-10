@@ -33,7 +33,6 @@ export class Product {
 }
 
 export interface ICreateProductInputDTO {
-    token: string,
     name: string,
     price: number,
     qtyStock: number
@@ -44,9 +43,59 @@ export interface ICreateProductOutputDTO {
 export interface IAllProductInputDTO {
     token: string
 }
+export interface IAddProductCartInputDTO {
+    idProduct: string
+    nameProduct: string,
+    price: number,
+    qtyStock: number
+}
 export interface IProductDTO {
     id: string,
     name: string,
     price: number,
     qty_stock: number
+}
+export interface INewAddProductCartDTO {
+    id: string,
+    idProduct: string,
+    name: string,
+    price: number,
+    qtyStock: number
+}
+export interface IProductsInartOutputDTO {
+    id: string
+    idProduct: string,
+}
+export interface INewRquestDTO {
+    id: string,
+    deliveryDate: Date,
+    totalPrice: number,
+    quantity: number
+}
+export interface IAddCartDataBaseDTO {
+    id: string,
+    id_product: string,
+    name: string,
+    price: number,
+    qty_stock: number
+}
+export interface IAddProductCartOutputDTO {
+    message: string
+}
+export interface IRequestInputDTO {
+    deliveryDate: Date,
+    totalPrice: number,
+    quantity: number,
+}
+export interface INewRequestInputDTO {
+    id: string,
+    delivery_date: Date,
+    total_price: number,
+    quantity: number
+}
+export interface INewRequestOutputDTO {
+    message: string
+}
+export interface INewRequestOutputDTO {
+    message: string
 }
