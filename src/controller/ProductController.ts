@@ -39,7 +39,7 @@ export class ProductController {
         try {
             const input: IAddProductCartInputDTO = {
                 idProduct: req.body.idProduct,
-                name: req.body.name,
+                nameProduct: req.body.nameProduct,
                 price: req.body.price,
                 qtyStock: req.body.qtyStock
             }
@@ -71,10 +71,10 @@ export class ProductController {
         }
     }
 
-    public productsInart = async (req: Request, res: Response) => {
+    public productsInCart = async (req: Request, res: Response) => {
         try {
             
-            const allProductsInart = await this.productBusiness.productsInart()
+            const allProductsInart = await this.productBusiness.productsInCart()
 
             res.status(200).send(allProductsInart)
 

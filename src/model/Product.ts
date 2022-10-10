@@ -45,7 +45,7 @@ export interface IAllProductInputDTO {
 }
 export interface IAddProductCartInputDTO {
     idProduct: string
-    name: string,
+    nameProduct: string,
     price: number,
     qtyStock: number
 }
@@ -56,8 +56,11 @@ export interface IProductDTO {
     qty_stock: number
 }
 export interface INewAddProductCartDTO {
-    id: string
+    id: string,
     idProduct: string,
+    name: string,
+    price: number,
+    qtyStock: number
 }
 export interface IProductsInartOutputDTO {
     id: string
@@ -71,7 +74,10 @@ export interface INewRquestDTO {
 }
 export interface IAddCartDataBaseDTO {
     id: string,
-    id_product: string
+    id_product: string,
+    name: string,
+    price: number,
+    qty_stock: number
 }
 export interface IAddProductCartOutputDTO {
     message: string

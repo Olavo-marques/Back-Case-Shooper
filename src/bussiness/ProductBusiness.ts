@@ -54,25 +54,31 @@ export class ProductBusiness {
 
     public addProductCart = async (input: IAddProductCartInputDTO) => {
 
-        const { idProduct } = input
+        const { idProduct, nameProduct, price, qtyStock } = input
 
-        if (!idProduct) {
+        console.log("body", input)
+
+        if (!idProduct || !nameProduct || !price || !qtyStock) {
             throw new MissingInformation()
         }
 
-        const allProductsInartawait = await this.productDataBase.selectProductsInartById(idProduct)
+        const allProductsInartawait = await this.productDataBase.selectProductsInCartById(idProduct)
 
         if (allProductsInartawait) {
             throw new ExistProductInCart()
         }
+
         const idAddProduct = this.generateId.generateId()
 
         const newAddProduct: INewAddProductCartDTO = {
             id: idAddProduct,
-            idProduct: idProduct
+            idProduct: idProduct,
+            name: nameProduct,
+            price: price,
+            qtyStock: qtyStock
         }
 
-        await this.productDataBase.insertProductRequest(newAddProduct)
+        await this.productDataBase.insertProductCart(newAddProduct)
 
 
         const response: IAddProductCartOutputDTO = {
@@ -108,9 +114,11 @@ export class ProductBusiness {
         return response
     }
 
-    public productsInart = async () => {
+    public productsInCart = async () => {
 
-        const allProductsInartawait = this.productDataBase.selectProductsInart()
+        const allProductsInartawait = this.productDataBase.selectProductsInCart()
+
+        // const allProductsInartawait = await this.productDataBase.selectSumAllProductsInCart()
 
         return allProductsInartawait
     }

@@ -33,7 +33,10 @@ export class ProductDataBase extends BaseDataBase {
 
         const addCartDataBase: IAddCartDataBaseDTO = {
             id: addCart.id,
-            id_product: addCart.idProduct
+            id_product: addCart.idProduct,
+            name: addCart.name,
+            price: addCart.price,
+            qty_stock: addCart.qtyStock
         }
 
         return addCartDataBase
@@ -67,13 +70,12 @@ export class ProductDataBase extends BaseDataBase {
         return allProduct
     }
 
-    public insertProductRequest = async (addCart: INewAddProductCartDTO) => {
+    public insertProductCart = async (addCart: INewAddProductCartDTO) => {
         const newProductCart = this.addProductCartModel(addCart)
 
         await this.getConnection()
             .insert(newProductCart)
             .into(ProductDataBase.TABLE_ADD_PRODUCT)
-
     }
 
     public insertRequest = async (newRquest: INewRquestDTO) => {
@@ -85,7 +87,7 @@ export class ProductDataBase extends BaseDataBase {
 
     }
 
-    public selectProductsInart = async (): Promise<IProductsInartOutputDTO[]> => {
+    public selectProductsInCart = async (): Promise<IProductsInartOutputDTO[]> => {
 
         const productsInart: IProductsInartOutputDTO[] = await this.getConnection()
             .select("*")
@@ -96,15 +98,24 @@ export class ProductDataBase extends BaseDataBase {
 
     }
 
-    public selectProductsInartById = async (idProduct: string): Promise<IProductsInartOutputDTO | undefined> => {
+    public selectProductsInCartById = async (idProduct: string): Promise<IProductsInartOutputDTO | undefined> => {
 
         const test: IProductsInartOutputDTO[] = await this.getConnection()
             .select("*")
-            // .count("id as Id")
             .from(ProductDataBase.TABLE_ADD_PRODUCT)
             .where({ id_product: idProduct })
 
         return test[0]
+
+    }
+
+    public selectSumAllProductsInCart = async () => {
+
+        const test = await this.getConnection()
+            .from(ProductDataBase.TABLE_ADD_PRODUCT)
+            .sum("price")
+
+        return test
 
     }
 }

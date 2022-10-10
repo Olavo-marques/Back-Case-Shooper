@@ -15,11 +15,14 @@ POST http://localhost:3003/user/cart
 Content-Type: application/json
 
 {
-    "idProduct": "1d8e1e7d-c701-49c9-95b8-8acd36fa556e"
+    "idProduct": "1d8e1e7d-c701-49c9-95b8-8acd36fa556e",
+    "nameProduct": "FILME DE PVC PRATSY 15M",
+    "price": "4.39",
+    "qtyStock": "410"
 }
 
 ###
-GET  http://localhost:3003/user/product/cart
-Content-Type: application/json
+GET http://localhost:3003/user/product/cart
 
 ###
+
