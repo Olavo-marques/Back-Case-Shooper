@@ -1,28 +1,44 @@
-POST http://localhost:3003/user/adm/product
+
+GET http://localhost:3003/user/product?nameOrPrice=name&order=desc
+
+###
+POST http://localhost:3003/user/product/request
 Content-Type: application/json
 
-{
-    "name":"PRATO DESCARTÁVEL COPOBRAS 21CM", 
-    "price": 3.79,
-    "qtyStock": 913
+{""
+    "nameUser": "Olavo",
+    "deliveryDate": "2022-10-02",
+    "totalPrice": 500,
+    "productList": [
+        {
+            "id": "49701c0a-b489-49fd-8902-4139cc7dc2d0",
+            "name": "ÁGUA MINERAL BONAFONT SEM GÁS 1",
+            "price": 2.39,
+            "qtyStock": 869
+        }
+    ]
 }
 
-###
-GET http://localhost:3003/user/product
 
-###
-POST http://localhost:3003/user/cart
-Content-Type: application/json
 
-{
-    "idProduct": "1d8e1e7d-c701-49c9-95b8-8acd36fa556e",
-    "nameProduct": "FILME DE PVC PRATSY 15M",
-    "price": "4.39",
-    "qtyStock": "410"
-}
 
-###
-GET http://localhost:3003/user/product/cart
 
-###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

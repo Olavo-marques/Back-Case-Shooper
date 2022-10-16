@@ -1,122 +1,87 @@
-import { count } from "console";
-import { IAddCartDataBaseDTO, INewAddProductCartDTO, INewRequestInputDTO, INewRquestDTO, IProductDTO, IProductsInartOutputDTO, Product } from "../model/Product";
 import BaseDataBase from "./BaseDataBase";
+import {
+  IQtyStockAndIdProductDTO,
+  INewAddProductCartDTO,
+  IAllProductInputDTO,
+  IAddCartDataBaseDTO,
+  INewProductListDTO,
+  INewRequestDbDTO,
+  INewRquestDTO,
+  IProductDTO
+} from "../model/Product";
 
 export class ProductDataBase extends BaseDataBase {
-    private static TABLE_PRODUCTS = "Shooper_Products"
-    private static TABLE_ADD_PRODUCT = "Shooper_Add_Product"
+  private static TABLE_PRODUCTS = "Shooper_Products";
+  private static TABLE_REQUEST = "Shooper_Request";
+  private static TABLE_ADD_PRODUCT = "Shooper_Add_Product";
 
-    private productModel = (product: Product) => {
 
-        const productDataBAse: IProductDTO = {
-            id: product.getId(),
-            name: product.getName(),
-            price: product.getPrice(),
-            qty_stock: product.getQtyStock()
-        }
+  private newRequestModel = (newRquest: INewRquestDTO) => {
+    const productDataBase: INewRequestDbDTO = {
+      id: newRquest.id,
+      name: newRquest.name,
+      delivery_date: newRquest.deliveryDate,
+      total_price: newRquest.totalPrice
+    };
 
-        return productDataBAse
-    }
-    private newRequestModel = (newRquest: INewRquestDTO) => {
+    return productDataBase;
+  };
 
-        const productDataBase: INewRequestInputDTO = {
-            id: newRquest.id,
-            delivery_date: newRquest.deliveryDate,
-            total_price: newRquest.totalPrice,
-            quantity: newRquest.quantity
-        }
+  private addProductListModel = (addCart: INewAddProductCartDTO) => {
+    
+    const addProductListDataBase: IAddCartDataBaseDTO = {
+      id: addCart.id,
+      id_product: addCart.idProduct,
+      name: addCart.name,
+      price: addCart.price,
+      id_request: addCart.idRequest
+    };
 
-        return productDataBase
-    }
+    return addProductListDataBase;
+  };
 
-    private addProductCartModel = (addCart: INewAddProductCartDTO) => {
 
-        const addCartDataBase: IAddCartDataBaseDTO = {
-            id: addCart.id,
-            id_product: addCart.idProduct,
-            name: addCart.name,
-            price: addCart.price,
-            qty_stock: addCart.qtyStock
-        }
+  public selectAllProduct = async (input: IAllProductInputDTO): Promise<IProductDTO[]> => {
 
-        return addCartDataBase
-    }
+    const allProduct: IProductDTO[] = await this.getConnection().raw(`
+      SELECT * FROM ${ProductDataBase.TABLE_PRODUCTS} WHERE name LIKE "%${input.search}%" ORDER BY ${input.nameOrPrice} ${input.order}
+    `);
 
-    public insertProduct = async (product: Product) => {
+    return allProduct;
+  };
 
-        const newProduct = this.productModel(product)
+  public insertRequest = async (newRquest: INewRquestDTO):Promise<void> => {  
 
-        await this.getConnection()
-            .insert(newProduct)
-            .into(ProductDataBase.TABLE_PRODUCTS)
-    }
+    const newProductCart = this.newRequestModel(newRquest);
 
-    public getProductByName = async (name: string) => {
+    await this.getConnection()
+      .insert(newProductCart)
+      .into(ProductDataBase.TABLE_REQUEST);
+  };
 
-        const productFound = await this.getConnection()
-            .select("*")
-            .from(ProductDataBase.TABLE_PRODUCTS)
-            .where({ name })
+  public insertProductList = async (addCart: INewProductListDTO) => {
 
-        return productFound[0]
-    }
+    const newProductList = this.addProductListModel(addCart);
 
-    public selectAllProduct = async (): Promise<IProductDTO[]> => {
+    await this.getConnection()
+      .insert(newProductList)
+      .into(ProductDataBase.TABLE_ADD_PRODUCT);
+  };
 
-        const allProduct: IProductDTO[] = await this.getConnection()
-            .select("*")
-            .from(ProductDataBase.TABLE_PRODUCTS)
+  public selectProductById = async (idProduct: string): Promise<IProductDTO> => {
 
-        return allProduct
-    }
+    const productFound: IProductDTO[] = await this.getConnection()
+      .select("*")
+      .from(ProductDataBase.TABLE_PRODUCTS)
+      .where({ id: idProduct });
 
-    public insertProductCart = async (addCart: INewAddProductCartDTO) => {
-        const newProductCart = this.addProductCartModel(addCart)
+    return productFound[0];
+  };
 
-        await this.getConnection()
-            .insert(newProductCart)
-            .into(ProductDataBase.TABLE_ADD_PRODUCT)
-    }
+  public updateQtyStock = async (qtyStockAndIdProduct: IQtyStockAndIdProductDTO): Promise<void> => {
 
-    public insertRequest = async (newRquest: INewRquestDTO) => {
-        const newProductCart = this.newRequestModel(newRquest)
-
-        await this.getConnection()
-            .insert(newProductCart)
-            .into(ProductDataBase.TABLE_ADD_PRODUCT)
-
-    }
-
-    public selectProductsInCart = async (): Promise<IProductsInartOutputDTO[]> => {
-
-        const productsInart: IProductsInartOutputDTO[] = await this.getConnection()
-            .select("*")
-            // .count("id as Id")
-            .from(ProductDataBase.TABLE_ADD_PRODUCT)
-
-        return productsInart
-
-    }
-
-    public selectProductsInCartById = async (idProduct: string): Promise<IProductsInartOutputDTO | undefined> => {
-
-        const test: IProductsInartOutputDTO[] = await this.getConnection()
-            .select("*")
-            .from(ProductDataBase.TABLE_ADD_PRODUCT)
-            .where({ id_product: idProduct })
-
-        return test[0]
-
-    }
-
-    public selectSumAllProductsInCart = async () => {
-
-        const test = await this.getConnection()
-            .from(ProductDataBase.TABLE_ADD_PRODUCT)
-            .sum("price")
-
-        return test
-
-    }
+    await this.getConnection().raw(`
+        UPDATE ${ProductDataBase.TABLE_PRODUCTS} SET qty_stock = ${qtyStockAndIdProduct.qtyStock} WHERE id ='${qtyStockAndIdProduct.idProduct}' 
+    `);
+  };
 }
-

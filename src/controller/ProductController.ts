@@ -1,86 +1,46 @@
-import { Request, Response } from "express";
+import { IArrayDTO, INewRequestInputDTO } from "../model/Product";
 import { ProductBusiness } from "../bussiness/ProductBusiness";
-import { IAddProductCartInputDTO, IAllProductInputDTO, ICreateProductInputDTO, IRequestInputDTO } from "../model/Product";
+import { IAllProductInputDTO } from "../model/Product";
+import { Request, Response } from "express";
 
 export class ProductController {
-    constructor(
-        private productBusiness: ProductBusiness
-    ) { }
+  constructor(
+    private productBusiness: ProductBusiness
+  ) { }
 
-    public createProduct = async (req: Request, res: Response) => {
-        try {
-            const input: ICreateProductInputDTO = {
-                name: req.body.name,
-                price: req.body.price,
-                qtyStock: req.body.qtyStock
-            }
+  public allProduct = async (req: Request, res: Response) => {
+    try {
+      let input: IAllProductInputDTO = {
+        search: req.query.search as string,
+        nameOrPrice: req.query.nameOrPrice as string,
+        order: req.query.order as string,
+      };
 
-            const response = await this.productBusiness.createProduct(input)
+      const allProducts = await this.productBusiness.allProduct(input);
 
-            res.status(201).send(response)
-
-        } catch (error: any) {
-            res.status(error.statusCode || 500).send({ message: error.message })
-        }
+      res.status(200).send(allProducts[0]);
+    } catch (error: any) {
+      res.status(error.statusCode || 500).send({ message: error.message });
     }
+  };
 
-    public allProduct = async (req: Request, res: Response) => {
-        try {
-            const allProducts = await this.productBusiness.allProduct()
+  public addRequest = async (req: Request, res: Response) => {
+    try {
+      const input: INewRequestInputDTO = {
+        nameUser: req.body.nameUser,
+        deliveryDate: req.body.deliveryDate,
+        totalPrice: req.body.totalPrice,
+        productList: req.body.productList
+      };
 
-            res.status(200).send(allProducts)
+      const productList: IArrayDTO[] = req.body.productList
 
-        } catch (error: any) {
-            res.status(error.statusCode || 500).send({ message: error.message })
-        }
+      const response = await this.productBusiness.addRequest(input, productList);
+
+      res.status(201).send(response);
+
+    } catch (error: any) {
+      res.status(error.statusCode || 500).send({ message: error.message });
     }
-
-    public addProductCart = async (req: Request, res: Response) => {
-        try {
-            const input: IAddProductCartInputDTO = {
-                idProduct: req.body.idProduct,
-                nameProduct: req.body.nameProduct,
-                price: req.body.price,
-                qtyStock: req.body.qtyStock
-            }
-
-            const response = await this.productBusiness.addProductCart(input)
-
-            res.status(200).send(response)
-
-        } catch (error: any) {
-            res.status(error.statusCode || 500).send({ message: error.message })
-        }
-    }
-
-
-    public request = async (req: Request, res: Response) => {
-        try {
-            const input: IRequestInputDTO = {
-                deliveryDate: req.body.deliveryDate,
-                totalPrice: req.body.totalPrice,
-                quantity: req.body.quantity,
-            }
-
-            const response = await this.productBusiness.request(input)
-
-            res.status(200).send(response)
-
-        } catch (error: any) {
-            res.status(error.statusCode || 500).send({ message: error.message })
-        }
-    }
-
-    public productsInCart = async (req: Request, res: Response) => {
-        try {
-            
-            const allProductsInart = await this.productBusiness.productsInCart()
-
-            res.status(200).send(allProductsInart)
-
-        } catch (error: any) {
-            res.status(error.statusCode || 500).send({ message: error.message })
-        }
-    }
-
+  };
 }

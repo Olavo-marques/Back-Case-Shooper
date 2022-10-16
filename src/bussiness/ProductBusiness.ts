@@ -1,125 +1,97 @@
-import { IAddProductCartInputDTO, IAddProductCartOutputDTO, IAllProductInputDTO, ICreateProductInputDTO, ICreateProductOutputDTO, INewAddProductCartDTO, INewRequestOutputDTO, INewRquestDTO, IRequestInputDTO, Product } from "../model/Product";
-import { ProductAlreadyExists } from "../error/ProductAlreadyExists";
+import { IArrayDTO, INewRequestInputDTO } from "../model/Product";
 import { MissingInformation } from "../error/MissingInformation";
-import { ExistProductInCart } from "../error/ExistProductInCart";
 import { ProductDataBase } from "../dataBase/ProductDataBase";
-import { ProductNotFound } from "../error/ProductNotFound";
 import { GenerateId } from "../services/GenerateId";
+import {
+  IAddProductCartOutputDTO,
+  IQtyStockAndIdProductDTO,
+  IAllProductInputDTO,
+  INewProductListDTO,
+  INewRquestDTO
+} from "../model/Product";
 
 export class ProductBusiness {
-    constructor(
-        private productDataBase: ProductDataBase,
-        private generateId: GenerateId,
-    ) { }
+  constructor(
+    private productDataBase: ProductDataBase,
+    private generateId: GenerateId
+  ) { }
 
-    public createProduct = async (input: ICreateProductInputDTO) => {
-        console.log("entrei createProduct ProductBusiness")
+  public allProduct = async (input: IAllProductInputDTO) => {
+    let { search, nameOrPrice, order } = input;
 
-        const { name, price, qtyStock } = input
-
-
-        if (!name || !price || !qtyStock) {
-            throw new MissingInformation()
-        }
-
-        const productExist = await this.productDataBase.getProductByName(name)
-
-        if (productExist) {
-            throw new ProductAlreadyExists()
-        }
-
-        const idProduct = this.generateId.generateId()
-
-        const newProduct = new Product(idProduct, name, price, qtyStock)
-
-        await this.productDataBase.insertProduct(newProduct)
-
-        const response: ICreateProductOutputDTO = {
-            message: "Produto cadastrado"
-        }
-
-        return response
+    if (!search) {
+      search = "a";
+    }
+    if (!nameOrPrice) {
+      nameOrPrice = "name";
+    }
+    if (!order) {
+      order = "ASC";
     }
 
-    public allProduct = async () => {
+    const inputNewValue: IAllProductInputDTO = {
+      search,
+      nameOrPrice,
+      order,
+    };
 
-        const AllProductsBataBase = await this.productDataBase.selectAllProduct()
+    const allProductsBataBase = await this.productDataBase.selectAllProduct(inputNewValue);
 
-        if (!AllProductsBataBase.length) {
-            throw new ProductNotFound()
-        }
+    return allProductsBataBase;
+  };
 
-        return AllProductsBataBase
+  public addRequest = async (input: INewRequestInputDTO, productList: IArrayDTO[]) => {
+
+    const { nameUser, deliveryDate, totalPrice } = input;
+
+    if (!nameUser || !deliveryDate || !totalPrice) {
+      throw new MissingInformation();
     }
 
-    public addProductCart = async (input: IAddProductCartInputDTO) => {
+    for (let product of productList) {
+      const productFound = await this.productDataBase.selectProductById(product.id);
 
-        const { idProduct, nameProduct, price, qtyStock } = input
+      const soldAmount: number = 1;
 
-        console.log("body", input)
+      const remainingAmount = productFound.qty_stock - soldAmount;
 
-        if (!idProduct || !nameProduct || !price || !qtyStock) {
-            throw new MissingInformation()
-        }
+      const qtyStockAndIdProduct: IQtyStockAndIdProductDTO = {
+        idProduct: product.id,
+        qtyStock: remainingAmount,
+      };
 
-        const allProductsInartawait = await this.productDataBase.selectProductsInCartById(idProduct)
-
-        if (allProductsInartawait) {
-            throw new ExistProductInCart()
-        }
-
-        const idAddProduct = this.generateId.generateId()
-
-        const newAddProduct: INewAddProductCartDTO = {
-            id: idAddProduct,
-            idProduct: idProduct,
-            name: nameProduct,
-            price: price,
-            qtyStock: qtyStock
-        }
-
-        await this.productDataBase.insertProductCart(newAddProduct)
-
-
-        const response: IAddProductCartOutputDTO = {
-            message: "Produto adicionado"
-        }
-
-        return response
+      await this.productDataBase.updateQtyStock(qtyStockAndIdProduct);
     }
 
-    public request = async (input: IRequestInputDTO) => {
+    const idRequest = this.generateId.generateId();
 
-        const { deliveryDate, totalPrice, quantity } = input
+    const newRquest: INewRquestDTO = {
+      id: idRequest,
+      name: nameUser,
+      deliveryDate: deliveryDate,
+      totalPrice: totalPrice,
+    };
 
-        if (!deliveryDate || !totalPrice || !quantity) {
-            throw new MissingInformation()
-        }
+    await this.productDataBase.insertRequest(newRquest);
 
-        const id = this.generateId.generateId()
+    for (let product of productList) {
+      const idNewList = this.generateId.generateId();
 
-        const newRquest: INewRquestDTO = {
-            id,
-            deliveryDate,
-            totalPrice,
-            quantity
-        }
+      const newProduct: INewProductListDTO = {
+        id: idNewList,
+        idProduct: product.id,
+        name: product.name,
+        price: product.price,
+        idRequest: idRequest,
+      };
 
-        await this.productDataBase.insertRequest(newRquest)
-
-        const response: INewRequestOutputDTO = {
-            message: "Pedido criado"
-        }
-
-        return response
+      await this.productDataBase.insertProductList(newProduct);
     }
 
-    public productsInCart = async () => {
+    const response: IAddProductCartOutputDTO = {
+      message: `${nameUser} Sua lista de compra foi recebida, agradecemos por ser nosso cliente`,
+    };
 
-        const allProductsInartawait = this.productDataBase.selectProductsInCart()
-
-        // const allProductsInartawait = await this.productDataBase.selectSumAllProductsInCart()
-
-        return allProductsInartawait
-    }
+    return response;
+  };
 }
