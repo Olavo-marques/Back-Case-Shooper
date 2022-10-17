@@ -8,8 +8,6 @@
     "dev": "ts-node-dev ./src/index.ts",
     "build": "tsc"
   },
-  "engines": {
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
