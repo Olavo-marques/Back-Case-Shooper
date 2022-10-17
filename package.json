@@ -6,10 +6,9 @@
   "scripts": {
     "start": "node ./build/index.js",
     "dev": "ts-node-dev ./src/index.ts",
-    "postinstall": "tsc"
+    "build": "tsc"
   },
   "engines": {
-    "node": "v16.15.0"
   },
   "keywords": [],
   "author": "",
