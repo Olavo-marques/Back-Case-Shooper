@@ -1,15 +1,15 @@
 {
+    "name": "base-do-projeto",
     "version": 2,
-    "build": [
+    "public": true,
+    "build": {
+        "src": "src/index.ts ",
+        "use": "@vercel/node"
+    },
+    "routes": [
         {
-            "src": "src/index.ts ",
-            "use": "@vercel/node"
-        }
-    ],
-    "routes":[
-        {
-            "src": "(.*)",
-            "dest":  "src/index.ts"
+            "src": "/(.*)",
+            "dest": "src/index.ts"
         }
     ]
 }
